@@ -68,7 +68,6 @@ const config: HardhatUserConfig = {
       url: process.env.ETH_GOERLI_PROVIDER || "",
       accounts: [GOERLI_PRIVATE_KEY, GOERLI_PRIVATE_KEY2],
       gasMultiplier: 1.8,
-      minGasPrice: 1e9,
       timeout: 0,
       allowUnlimitedContractSize: false,
     },
@@ -92,6 +91,7 @@ const config: HardhatUserConfig = {
     alphaSort: false,
     disambiguatePaths: false,
     runOnCompile: true,
+    except: ["Test", "Mock"],
   },
 };
 

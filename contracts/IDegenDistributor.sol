@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.5.0;
 
-import { IDegenNFT } from "./IDegenNFT.sol";
+import { IDegenNFT } from "@gearbox-protocol/core-v2/contracts/interfaces/IDegenNFT.sol";
 
 // Allows anyone to claim a token if they exist in a merkle root.
 interface IDegenDistributor {

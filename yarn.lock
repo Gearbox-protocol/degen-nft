@@ -616,6 +616,11 @@
     "@ethersproject/properties" "^5.7.0"
     "@ethersproject/strings" "^5.7.0"
 
+"@gearbox-protocol/core-v2@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@gearbox-protocol/core-v2/-/core-v2-1.0.3.tgz#08addc5c55ef54a3283d23b2605102d9b293c148"
+  integrity sha512-wol0/aiQ7xyMME/E2dhNxOLM7C5D6qN4bTl9J37V2reI3PaUKC15dq0P8tbmD9F8eZqWgfQQeLA1acjQUpactg==
+
 "@gearbox-protocol/devops@^1.1.3":
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@gearbox-protocol/devops/-/devops-1.1.3.tgz#3c8d168611392236ffe661ff144c9600ee48e805"

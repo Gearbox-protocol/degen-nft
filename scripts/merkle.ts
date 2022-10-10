@@ -1,16 +1,26 @@
 import * as dotenv from "dotenv";
 import * as fs from "fs";
-import { NewFormat, parseBalanceMap } from "../merkle/parse-accounts";
+import {
+  MerkleDistributorInfo,
+  NewFormat,
+  parseBalanceMap,
+} from "../merkle/parse-accounts";
 import { degens } from "../degens";
 import { Logger } from "tslog";
 import { DegenDistributor } from "../types";
-import { Verifier, deploy } from "@gearbox-protocol/devops";
+import { Verifier, deploy, waitForTransaction } from "@gearbox-protocol/devops";
 import { ethers } from "hardhat";
 import { JsonRpcProvider } from "@ethersproject/providers";
 
-const DEGEN_NFT = "0x0A031e1bC8C0dA62547716bf3Af1A32533D6d848";
-
 async function deployMerkle() {
+  dotenv.config({ path: ".env.goerli" });
+
+  const DEGEN_NFT = process.env.REACT_APP_DEGEN_NFT || "";
+
+  if (DEGEN_NFT === "") {
+    throw new Error("Address provider is not set");
+  }
+
   const log = new Logger();
   const verifier = new Verifier();
   log.info("generate merkle trees");
