@@ -4,13 +4,7 @@ import * as dotenv from "dotenv";
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import { Logger } from "tslog";
-import { degens } from "../degens";
-import {
-  DegenDistributorInfo,
-  parseBalanceMap,
-} from "../merkle/parse-accounts";
-import { DegenDistributor } from "../types";
-import { DegenNFT } from "../types/@gearbox-protocol/core-v2/contracts/tokens";
+import { DegenNFT } from "../types";
 
 export const fee = {
   maxFeePerGas: BigNumber.from(105e9),
