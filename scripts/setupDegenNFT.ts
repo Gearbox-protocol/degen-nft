@@ -5,10 +5,16 @@ import {
 } from "@gearbox-protocol/devops";
 import { getNetworkType, IACL__factory } from "@gearbox-protocol/sdk";
 import * as dotenv from "dotenv";
+import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import { Logger } from "tslog";
 
 import { AddressProvider__factory, DegenNFT__factory } from "../types";
+
+export const fee = {
+  maxFeePerGas: BigNumber.from(105e9),
+  maxPriorityFeePerGas: BigNumber.from(4e9),
+};
 
 async function setupDegenNFT() {
   const accounts = await ethers.getSigners();
@@ -53,9 +59,7 @@ async function setupDegenNFT() {
 
   const nft = DegenNFT__factory.connect(degenNFT, deployer);
 
-  await waitForTransaction(
-    nft.connect(root).setMinter(degenDistributor, { gasLimit: 20e6 })
-  );
+  await waitForTransaction(nft.connect(root).setMinter(degenDistributor, fee));
 }
 
 setupDegenNFT()

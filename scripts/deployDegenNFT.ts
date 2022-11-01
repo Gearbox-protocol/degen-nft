@@ -1,27 +1,35 @@
-import { deploy, Verifier, waitForTransaction } from "@gearbox-protocol/devops";
-import * as fs from "fs";
+import { deploy, detectNetwork, Verifier } from "@gearbox-protocol/devops";
+import { getNetworkType } from "@gearbox-protocol/sdk";
 import * as dotenv from "dotenv";
+import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import { Logger } from "tslog";
-import { degens } from "../degens";
-import {
-  MerkleDistributorInfo,
-  NewFormat,
-  parseBalanceMap,
-} from "../merkle/parse-accounts";
-import { DegenDistributor } from "../types";
 import { DegenNFT } from "../types/@gearbox-protocol/core-v2/contracts/tokens";
-import { AddressProvider__factory } from "../types/factories/@gearbox-protocol/core-v2/contracts/core";
+
+export const fee = {
+  maxFeePerGas: BigNumber.from(105e9),
+  maxPriorityFeePerGas: BigNumber.from(3e9),
+};
 
 async function deployDegenNFT() {
-  dotenv.config({ path: ".env.goerli" });
   const log = new Logger();
   const verifier = new Verifier();
 
   const accounts = await ethers.getSigners();
   const deployer = accounts[0];
 
-  console.log(deployer.address);
+  // Gets current chainId
+  const chainId = await accounts[0].getChainId();
+
+  const networkType =
+    chainId === 1337 ? await detectNetwork() : getNetworkType(chainId);
+
+  dotenv.config({
+    path: networkType === "Goerli" ? ".env.goerli" : ".env.mainnet",
+  });
+
+  log.warn(`Chain: ${networkType}`);
+  log.warn(`Deployer address: ${deployer.address}`);
 
   const addressProvider = process.env.REACT_APP_ADDRESS_PROVIDER || "";
 
@@ -34,7 +42,8 @@ async function deployDegenNFT() {
   const degenNFT = await deploy<DegenNFT>(
     "DegenNFT",
     log,
-    ...constructorArguments
+    ...constructorArguments,
+    fee
   );
 
   verifier.addContract({
