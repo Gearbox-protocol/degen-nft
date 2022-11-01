@@ -5,8 +5,7 @@ import { ethers } from "hardhat";
 import { Logger } from "tslog";
 import { degens } from "../degens";
 import {
-  MerkleDistributorInfo,
-  NewFormat,
+  DegenDistributorInfo,
   parseBalanceMap,
 } from "../merkle/parse-accounts";
 import { DegenDistributor } from "../types";
