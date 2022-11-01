@@ -1,59 +1,69 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.10;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
-import {IDegenDistributor} from "./IDegenDistributor.sol";
+import {IAddressProvider} from "@gearbox-protocol/core-v2/contracts/interfaces/IAddressProvider.sol";
 import {IDegenNFT} from "@gearbox-protocol/core-v2/contracts/interfaces/IDegenNFT.sol";
-import {DegenNFT} from "@gearbox-protocol/core-v2/contracts/tokens/DegenNFT.sol";
+import {IDegenDistributor} from "./IDegenDistributor.sol";
 
 contract DegenDistributor is IDegenDistributor {
-    IDegenNFT public immutable override token;
-    bytes32 public immutable override merkleRoot;
+    /// @dev Emits each time when call not by treasury
+    error TreasuryOnlyException();
 
-    // This is a packed array of booleans.
-    mapping(uint256 => uint256) private claimedBitMap;
+    /// @dev Returns the token distributed by the contract
+    IDegenNFT public immutable override degenNFT;
 
-    constructor(address token_, bytes32 merkleRoot_) {
-        token = IDegenNFT(token_);
+    /// @dev DAO Treasury address
+    address public immutable treasury;
+
+    /// @dev The current merkle root of total claimable balances
+    bytes32 public override merkleRoot;
+
+    /// @dev The mapping that stores amounts already claimed by users
+    mapping(address => uint256) public claimed;
+
+    modifier treasuryOnly() {
+        if (msg.sender != treasury) revert TreasuryOnlyException();
+        _;
+    }
+
+    constructor(
+        address addressProvider,
+        address degenNFT_,
+        bytes32 merkleRoot_
+    ) {
+        degenNFT = IDegenNFT(degenNFT_);
+        treasury = IAddressProvider(addressProvider).getTreasuryContract();
         merkleRoot = merkleRoot_;
     }
 
-    function isClaimed(uint256 index) public view override returns (bool) {
-        uint256 claimedWordIndex = index / 256;
-        uint256 claimedBitIndex = index % 256;
-        uint256 claimedWord = claimedBitMap[claimedWordIndex];
-        uint256 mask = (1 << claimedBitIndex);
-        return claimedWord & mask == mask;
-    }
-
-    function _setClaimed(uint256 index) private {
-        uint256 claimedWordIndex = index / 256;
-        uint256 claimedBitIndex = index % 256;
-        claimedBitMap[claimedWordIndex] =
-            claimedBitMap[claimedWordIndex] |
-            (1 << claimedBitIndex);
+    function updateMerkleRoot(bytes32 newRoot) external treasuryOnly {
+        bytes32 oldRoot = merkleRoot;
+        merkleRoot = newRoot;
+        emit RootUpdated(oldRoot, newRoot);
     }
 
     function claim(
         uint256 index,
         address account,
-        uint256 amount,
+        uint256 totalAmount,
         bytes32[] calldata merkleProof
     ) external override {
-        require(!isClaimed(index), "MerkleDistributor: Drop already claimed.");
+        require(
+            claimed[account] < totalAmount,
+            "MerkleDistributor: Nothing to claim"
+        );
 
-        // Verify the merkle proof.
-        bytes32 node = keccak256(abi.encodePacked(index, account, amount));
+        bytes32 node = keccak256(abi.encodePacked(index, account, totalAmount));
         require(
             MerkleProof.verify(merkleProof, merkleRoot, node),
             "MerkleDistributor: Invalid proof."
         );
 
-        // Mark it claimed and send the token.
-        _setClaimed(index);
-        token.mint(account, amount);
+        uint256 claimedAmount = totalAmount - claimed[account];
+        claimed[account] += claimedAmount;
+        degenNFT.mint(account, claimedAmount);
 
-        emit Claimed(index, account, amount);
+        emit Claimed(account, claimedAmount);
     }
 }

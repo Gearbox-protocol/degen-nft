@@ -1,4 +1,4 @@
-import { BigNumber, utils } from "ethers";
+import { BigNumber, BigNumberish, utils } from "ethers";
 import BalanceTree from "./balance-tree";
 
 const { isAddress, getAddress } = utils;
@@ -7,7 +7,7 @@ const { isAddress, getAddress } = utils;
 // It is completely sufficient for recreating the entire merkle tree.
 // Anyone can verify that all air drops are included in the tree,
 // and the tree has no additional distributions.
-export interface MerkleDistributorInfo {
+export interface DegenDistributorInfo {
   merkleRoot: string;
   tokenTotal: string;
   claims: {
@@ -19,23 +19,12 @@ export interface MerkleDistributorInfo {
   };
 }
 
-type OldFormat = { [account: string]: number | string };
-export type NewFormat = { address: string; amount: string | number };
+export type ClaimableBalance = { address: string; amount: BigNumberish };
 
 export function parseBalanceMap(
-  balances: OldFormat | NewFormat[]
-): MerkleDistributorInfo {
-  // if balances are in an old format, process them
-  const balancesInNewFormat: NewFormat[] = Array.isArray(balances)
-    ? balances
-    : Object.keys(balances).map(
-        (account): NewFormat => ({
-          address: account,
-          amount: `${balances[account]}`,
-        })
-      );
-
-  const dataByAddress = balancesInNewFormat.reduce<{
+  balances: ClaimableBalance[]
+): DegenDistributorInfo {
+  const dataByAddress = balances.reduce<{
     [address: string]: {
       amount: BigNumber;
       flags?: { [flag: string]: boolean };
