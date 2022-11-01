@@ -1,6 +1,6 @@
-import { NewFormat } from "./merkle/parse-accounts";
+import { ClaimableBalance } from "./merkle/parse-accounts";
 
-export type Ninja = NewFormat;
+export type Ninja = ClaimableBalance;
 
 export const degens: Array<Ninja> = [
   //   TESTERS
