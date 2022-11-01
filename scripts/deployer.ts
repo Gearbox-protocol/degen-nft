@@ -6,7 +6,7 @@ import {
   ClaimableBalance,
   parseBalanceMap,
 } from "../merkle/parse-accounts";
-import { DegenDistributor } from "../types";
+import { DegenDistributor, ISanctioned__factory } from "../types";
 
 export async function deployDistributor(
   apAddress: string,
@@ -23,7 +23,7 @@ export async function deployDistributor(
   const constructorArguments = [
     apAddress,
     degenNftAddress,
-    distributorInfo.merkleRoot
+    distributorInfo.merkleRoot,
   ];
 
   const airdropDistributor = await deploy<DegenDistributor>(
