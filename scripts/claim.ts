@@ -1,8 +1,8 @@
 import { waitForTransaction } from "@gearbox-protocol/devops";
 import { ethers } from "hardhat";
-import merkleData from "../merkle.json";
+
 import { DegenDistributor__factory } from "../types";
-import { MerkleDistributorInfo } from "../merkle/parse-accounts";
+import { DegenDistributorInfo } from "../core/parse-accounts";
 
 const DEGEN_DISTRIBUTOR = "0x75f74B4A665BFcc78df0Ff82c2eB677E610B7313";
 
@@ -17,16 +17,16 @@ async function claim(account: string) {
     deployer
   );
 
-  const claimData = (merkleData as MerkleDistributorInfo).claims[account];
+  // const claimData = (merkleData as DegenDistributorInfo).claims[account];
 
-  await waitForTransaction(
-    degenDistributor.claim(
-      claimData.index,
-      account,
-      claimData.amount,
-      claimData.proof
-    )
-  );
+  // await waitForTransaction(
+  //   degenDistributor.claim(
+  //     claimData.index,
+  //     account,
+  //     claimData.amount,
+  //     claimData.proof
+  //   )
+  // );
 }
 
 claim(ACCOUNT)

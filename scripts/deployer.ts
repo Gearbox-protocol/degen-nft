@@ -5,7 +5,7 @@ import {
   DegenDistributorInfo,
   ClaimableBalance,
   parseBalanceMap,
-} from "../merkle/parse-accounts";
+} from "../core/parse-accounts";
 import { DegenDistributor, ISanctioned__factory } from "../types";
 
 export async function deployDistributor(

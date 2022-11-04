@@ -6,18 +6,17 @@ import * as fs from "fs";
 import { ethers } from "hardhat";
 import { Logger } from "tslog";
 import { degens } from "../degens";
-import { ClaimableBalance } from "../core/parse-accounts";
-import { ISanctioned__factory } from "../types";
+import { ClaimableBalance, parseBalanceMap } from "../core/parse-accounts";
+import {
+  IDegenDistributor__factory,
+  IDegenNFT__factory,
+  ISanctioned__factory,
+} from "../types";
 import { deployDistributor } from "./deployer";
 
 const CHAINALYSIS_OFAC_ORACLE = "0x40c57923924b5c5c5455c48d93317139addac8fb";
 
-const fee = {
-  maxFeePerGas: BigNumber.from(25e9),
-  maxPriorityFeePerGas: BigNumber.from(3e9),
-};
-
-async function deployDistributorLive() {
+async function generateMerkle() {
   const accounts = await ethers.getSigners();
   const deployer = accounts[0];
 
@@ -32,19 +31,20 @@ async function deployDistributorLive() {
     path: networkType == "Goerli" ? ".env.goerli" : ".env.mainnet",
   });
 
-  const ADDRESS_PROVIDER = process.env.REACT_APP_ADDRESS_PROVIDER || "";
+  const DEGEN_DISTRIBUTOR = process.env.REACT_APP_DEGEN_DISTRIBUTOR || "";
 
-  const DEGEN_NFT = process.env.REACT_APP_DEGEN_NFT || "";
+  console.log(`Degen NFT: ${DEGEN_DISTRIBUTOR}`);
 
-  console.log(`Address provider: ${ADDRESS_PROVIDER}`);
-
-  if (ADDRESS_PROVIDER === "") {
+  if (DEGEN_DISTRIBUTOR === "") {
     throw new Error("ADDRESS_PROVIDER token address unknown");
   }
 
   const log = new Logger();
 
-  const distributed = degens;
+  const degenDistributor = IDegenDistributor__factory.connect(
+    DEGEN_DISTRIBUTOR,
+    deployer
+  );
 
   const provider = new providers.JsonRpcProvider(
     process.env.ETH_MAINNET_PROVIDER
@@ -77,19 +77,24 @@ async function deployDistributorLive() {
         amount: d.amount,
       });
     }
+
+    const claimed = await degenDistributor.claimed(address);
+
+    if (claimed.gt(d.amount)) {
+      throw new Error(
+        `${address} already claimed more than in merkle ${d.amount}`
+      );
+    }
   }
 
-  const [, merkle] = await deployDistributor(
-    ADDRESS_PROVIDER,
-    DEGEN_NFT,
-    distributed,
-    log,
-    fee
-  );
+  const merkle = parseBalanceMap(degens);
 
-  fs.writeFileSync("./merkle.json", JSON.stringify(merkle));
+  fs.writeFileSync(
+    `./merkle/${networkType.toLowerCase()}_${merkle.merkleRoot}.json`,
+    JSON.stringify(merkle)
+  );
 }
 
-deployDistributorLive()
+generateMerkle()
   .then(() => console.log("Ok"))
   .catch((e) => console.log(e));

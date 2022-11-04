@@ -17,7 +17,7 @@ import {
   DegenDistributorInfo,
   ClaimableBalance,
   parseBalanceMap,
-} from "../merkle/parse-accounts";
+} from "../core/parse-accounts";
 import { deployDistributor } from "../scripts/deployer";
 import {
   DegenDistributor,
@@ -87,17 +87,11 @@ describe("Degen distributor tests", function (this: Suite) {
     expect(await degenDistributor.treasury()).to.be.eq(treasury.address);
   });
 
-
   it(`[DD-2]: claim works correctly`, async () => {
     const nodeInfo = info.claims[DUMB_ADDRESS];
 
     const tx = await waitForTransaction(
-      degenDistributor.claim(
-        nodeInfo.index,
-        DUMB_ADDRESS,
-        5,
-        nodeInfo.proof
-      )
+      degenDistributor.claim(nodeInfo.index, DUMB_ADDRESS, 5, nodeInfo.proof)
     );
 
     const event = DegenDistributor__factory.createInterface().decodeEventLog(
@@ -136,15 +130,8 @@ describe("Degen distributor tests", function (this: Suite) {
     );
 
     expect(
-      degenDistributor.claim(
-        nodeInfo.index,
-        DUMB_ADDRESS,
-        5,
-        nodeInfo.proof
-      )
-    ).to.be.revertedWith(
-      "MerkleDistributor: Nothing to claim"
-    );
+      degenDistributor.claim(nodeInfo.index, DUMB_ADDRESS, 5, nodeInfo.proof)
+    ).to.be.revertedWith("MerkleDistributor: Nothing to claim");
   });
 
   it(`[DD-5]: updateMerkleRoot works correctly`, async () => {
@@ -175,12 +162,7 @@ describe("Degen distributor tests", function (this: Suite) {
     let nodeInfo = info.claims[DUMB_ADDRESS];
 
     await waitForTransaction(
-      degenDistributor.claim(
-        nodeInfo.index,
-        DUMB_ADDRESS,
-        5,
-        nodeInfo.proof
-      )
+      degenDistributor.claim(nodeInfo.index, DUMB_ADDRESS, 5, nodeInfo.proof)
     );
 
     const recipients: Array<ClaimableBalance> = [
@@ -197,36 +179,21 @@ describe("Degen distributor tests", function (this: Suite) {
     nodeInfo = newInfo.claims[DUMB_ADDRESS];
 
     await waitForTransaction(
-      degenDistributor.claim(
-        nodeInfo.index,
-        DUMB_ADDRESS,
-        7,
-        nodeInfo.proof
-      )
+      degenDistributor.claim(nodeInfo.index, DUMB_ADDRESS, 7, nodeInfo.proof)
     );
 
     expect(await token.balanceOf(DUMB_ADDRESS)).to.be.eq(7);
 
-    expect(await degenDistributor.claimed(DUMB_ADDRESS)).to.be.eq(
-      7
-    );
+    expect(await degenDistributor.claimed(DUMB_ADDRESS)).to.be.eq(7);
 
     expect(
-      degenDistributor.claim(
-        nodeInfo.index,
-        DUMB_ADDRESS,
-        7,
-        nodeInfo.proof
-      )
-    ).to.be.revertedWith(
-      "MerkleDistributor: Nothing to claim"
-    );
+      degenDistributor.claim(nodeInfo.index, DUMB_ADDRESS, 7, nodeInfo.proof)
+    ).to.be.revertedWith("MerkleDistributor: Nothing to claim");
   });
 
   it(`[DD-7]: updateMerkleRoot reverts on called by address with no access`, async () => {
     expect(
       degenDistributor.connect(user).updateMerkleRoot(info.merkleRoot)
     ).to.be.revertedWith("TreasuryOnlyException()");
-
   });
 });
