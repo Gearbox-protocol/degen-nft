@@ -1,0 +1,22 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT }}
+          projectName: ${{ secrets.CF_PROJECT_NAME }}
+          directory: merkle
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
