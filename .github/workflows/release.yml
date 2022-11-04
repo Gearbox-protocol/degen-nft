@@ -18,5 +18,5 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT }}
           projectName: ${{ secrets.CF_PROJECT_NAME }}
-          directory: public
+          directory: merkle
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
