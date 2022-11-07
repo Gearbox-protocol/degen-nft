@@ -88,6 +88,8 @@ async function generateMerkle() {
     `./merkle/${networkType.toLowerCase()}_${merkle.merkleRoot}.json`,
     JSON.stringify(merkle)
   );
+
+  log.warn(`MERKLE_ROOT: ${merkle.merkleRoot}`);
 }
 
 generateMerkle()
