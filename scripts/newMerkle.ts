@@ -1,18 +1,13 @@
 import { detectNetwork } from "@gearbox-protocol/devops";
 import { getNetworkType } from "@gearbox-protocol/sdk";
 import * as dotenv from "dotenv";
-import { BigNumber, providers } from "ethers";
+import { providers } from "ethers";
 import * as fs from "fs";
 import { ethers } from "hardhat";
 import { Logger } from "tslog";
-import { degens } from "../degens";
 import { ClaimableBalance, parseBalanceMap } from "../core/parse-accounts";
-import {
-  IDegenDistributor__factory,
-  IDegenNFT__factory,
-  ISanctioned__factory,
-} from "../types";
-import { deployDistributor } from "./deployer";
+import { degens } from "../degens";
+import { IDegenDistributor__factory, ISanctioned__factory } from "../types";
 
 const CHAINALYSIS_OFAC_ORACLE = "0x40c57923924b5c5c5455c48d93317139addac8fb";
 
