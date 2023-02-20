@@ -58,7 +58,7 @@ async function generateMerkle() {
       log.error(`Cant resolve ${d.address}`);
       process.exit(1);
     }
-
+    /*
     const isForbidden = await chainalysis.isSanctioned(address);
     if (isForbidden) {
       log.error(`${address} is in sanctioned list`);
@@ -72,7 +72,7 @@ async function generateMerkle() {
         amount: d.amount,
       });
     }
-
+    
     const claimed = await degenDistributor.claimed(address);
 
     if (claimed.gt(d.amount)) {
@@ -80,6 +80,7 @@ async function generateMerkle() {
         `${address} already claimed more than in merkle ${d.amount}`
       );
     }
+    */
   }
 
   const merkle = parseBalanceMap(degens);
