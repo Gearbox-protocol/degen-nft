@@ -2,6 +2,7 @@ import { ClaimableBalance } from "./core/parse-accounts";
 
 export const degens: Array<ClaimableBalance> = [
   //   TESTERS
+{'address': '0x002DA25856d27B8BbA529Ef12fE85080360B011a', 'amount': 2},
 {'address': '0x0035Fc5208eF989c28d47e552E92b0C507D2B318', 'amount': 6},
 {'address': '0x003f35595dce3187b4fff2b5a2c4303f7158208a', 'amount': 4},
 {'address': '0x00641ed1aae8a9700fd3fd4d899f2577d1ae6b22', 'amount': 4},
@@ -376,7 +377,7 @@ export const degens: Array<ClaimableBalance> = [
 {'address': '0x5d1acbece9e7a1259df2deecd680dd65ab84ed92', 'amount': 1},
 {'address': '0x5d47e5d242a8f66a6286b0a2353868875f5d6068', 'amount': 6},
 {'address': '0x5D71BaBf4F697C25cdE72DDf4045d2cA4BDcFb32', 'amount': 4},
-{'address': '0x5Db2d2a055466E0C5d4CF09869cF2E2CFc47b157', 'amount': 4},
+{'address': '0x5Db2d2a055466E0C5d4CF09869cF2E2CFc47b157', 'amount': 8},
 {'address': '0x5e27A2447b4f19064f0014D3De3bB0777f7b84c9', 'amount': 4},
 {'address': '0x5e46884a77e0ac5f3126e30720bd5218814dc5e2', 'amount': 4},
 {'address': '0x5e46f0D1B3e1Cf21d584FB557F98eb3EA4A19059', 'amount': 5},
@@ -569,6 +570,7 @@ export const degens: Array<ClaimableBalance> = [
 {'address': '0x8F688a91695F7D2a1E93e57cedcbf5c5202f617b', 'amount': 7},
 {'address': '0x8f70b3ac45a6896532fb90b992d5b7827ba88d3c', 'amount': 2},
 {'address': '0x8f9be4310f9abb0e5843cc6363908c9b01dfeb3f', 'amount': 2},
+{'address': '0x8fA54F2e82C2afA672B3c1C3931751af5a5AA2a1', 'amount': 2},
 {'address': '0x8fac841807e21807f511daf3c04a34cd78661f4c', 'amount': 6},
 {'address': '0x8fb88d42f8cfb29c8bc1c6f608e81c1dc241ca30', 'amount': 2},
 {'address': '0x8fd05381267eef20d82536e93848e8a7801aacf8', 'amount': 2},
@@ -590,6 +592,7 @@ export const degens: Array<ClaimableBalance> = [
 {'address': '0x93249D69636124ab311798F047dC1a8a94dd0a9E', 'amount': 5},
 {'address': '0x935AA9F9f57c82440A59CE11C63F07BCE42e1234', 'amount': 1},
 {'address': '0x93A356288E202dB0c9533eA384ec8D4B94270806', 'amount': 5},
+{'address': '0x940ec846224D703650238196D359a2bC67274A24', 'amount': 3},
 {'address': '0x941ec857134B13c255d6EBEeD1623b1904378De9', 'amount': 5},
 {'address': '0x94692B042A0E36671952FF0B71e43d6e0D06845a', 'amount': 5},
 {'address': '0x94a0321182F95B4b54537a6Dd78dF5750dF3513c', 'amount': 2},
