@@ -1,5 +1,5 @@
 import { detectNetwork } from "@gearbox-protocol/devops";
-import { getNetworkType } from "@gearbox-protocol/sdk";
+import { MCall, getNetworkType, multicall } from "@gearbox-protocol/sdk-gov";
 import * as dotenv from "dotenv";
 import { providers } from "ethers";
 import * as fs from "fs";
@@ -31,7 +31,7 @@ async function generateMerkle() {
   console.log(`Degen NFT: ${DEGEN_DISTRIBUTOR}`);
 
   if (DEGEN_DISTRIBUTOR === "") {
-    throw new Error("ADDRESS_PROVIDER token address unknown");
+    throw new Error("DEGEN_DISTRIBUTOR address unknown");
   }
 
   const log = new Logger();
@@ -51,6 +51,8 @@ async function generateMerkle() {
   );
 
   const degensAddr: Array<ClaimableBalance> = [];
+
+  const degensAddresses: Array<string> = [];
   for (const d of degens) {
     const address = await provider.resolveName(d.address);
 
@@ -58,29 +60,60 @@ async function generateMerkle() {
       log.error(`Cant resolve ${d.address}`);
       process.exit(1);
     }
-    
-    const isForbidden = await chainalysis.isSanctioned(address);
-    if (isForbidden) {
-      log.error(`${address} is in sanctioned list`);
-      process.exit(2);
-    } else {
-      console.debug(`${address} is pass chainalisys`);
-    }
-    if (address) {
-      degensAddr.push({
-        address,
-        amount: d.amount,
-      });
-    }
 
-    const claimed = await degenDistributor.claimed(address);
+    degensAddresses.push(address);
+  }
 
-    if (claimed.gt(d.amount)) {
+  console.log(degensAddresses.length);
+
+  const sactionedInterface = ISanctioned__factory.createInterface();
+
+  let calls: Array<MCall<typeof sactionedInterface>> = degensAddresses.map(
+    (address) => ({
+      address: CHAINALYSIS_OFAC_ORACLE,
+      interface: sactionedInterface,
+      method: "isSanctioned(address)",
+      params: [address],
+    })
+  );
+
+  const result = await multicall(calls, provider);
+
+  const sanctioned: Array<string> = [];
+
+  result.forEach((r, i) => {
+    if (r) {
+      sanctioned.push(degensAddresses[i]);
+    }
+  });
+
+  if (sanctioned.length > 0) {
+    console.log(
+      `Found ${sanctioned.length} addresses: ${sanctioned.join(", ")}`
+    );
+    process.exit(2);
+  }
+
+  const degenDistributorInterface =
+    IDegenDistributor__factory.createInterface();
+
+  const calls2: Array<MCall<typeof degenDistributorInterface>> =
+    degensAddresses.map((address) => ({
+      address: DEGEN_DISTRIBUTOR,
+      interface: degenDistributorInterface,
+      method: "claimed(address)",
+      params: [address],
+    }));
+
+  const result2 = await multicall(calls2, provider);
+
+  result2.forEach((r, i) => {
+    if (r.gt(degens[i].amount)) {
       throw new Error(
-        `${address} already claimed more than in merkle ${d.amount}`
+        `${degensAddresses[i]} already claimed more than in merkle ${degens[i].amount}`
       );
     }
-  }
+  });
 
   const merkle = parseBalanceMap(degens);
 
