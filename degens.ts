@@ -2931,7 +2931,7 @@ export const degens: Array<ClaimableBalance> = [
 {'address': '0x9Fb493005048c4Ee5AE2C0Aa268baB9A8E170FFf', 'amount': 3},
 {'address': '0x9fc188d25687f5c34889e8d50d6cdb0641ce40e4', 'amount': 1},
 {'address': '0x9fc76d244b2b9fc74d2dcd0bb75ae199755f83c8', 'amount': 1},
-{'address': '0x9Fcb35710Dba03AaC96058fbA8E98e96BABa9588', 'amount': 3},
+{'address': '0x9Fcb35710Dba03AaC96058fbA8E98e96BABa9588', 'amount': 5},
 {'address': '0x9fd73f30bdb4b1ead1ac4d377b99917576671abf', 'amount': 2},
 {'address': '0x9FDC3BB9BEe5645DF4E99cBa260f40EC9af4cF2b', 'amount': 3},
 {'address': '0x9fdfaec2b79362108d862a5d558fad31fe50a9c6', 'amount': 1},
